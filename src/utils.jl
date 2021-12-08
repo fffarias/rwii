@@ -2,7 +2,7 @@ module utils
 
 using SeisAcoustic, PyPlot, PyCall
 
-function MultiSeisPlotTX(d::Array{T,3}; style="color",
+function MultiSeisPlotTX(d::Vector{Matrix{T}}; style="color",
                       cmap="PuOr", pclip=98, vmin="NULL", vmax="NULL",
                       aspect="auto", interpolation="Hanning",
                       wiggle_fill_color="k", wiggle_line_color="k",
@@ -42,7 +42,7 @@ function MultiSeisPlotTX(d::Array{T,3}; style="color",
             # add every single subplot to the figure with a for loop
             ax = fig.add_subplot(1,3,Position[k])
             ax.set_title(title[k], fontsize=titlesize)                            
-            ax.imshow(d[:,:,k], cmap=cmap, vmin=a, vmax=b,
+            ax.imshow(d[k], cmap=cmap, vmin=a, vmax=b,
                     extent=[ox - dx/2,ox + (size(d,2)-1)*dx + dx/2,
                             oy + (size(d,1)-1)*dy,oy],
                     aspect=aspect, interpolation=interpolation)
@@ -92,5 +92,12 @@ function MultiSeisPlotTX(d::Array{T,3}; style="color",
     end
     return nothing # imm
 end   
+
+function readFile!(fname::AbstractString,
+    data::Array{<:AbstractFloat,1})
+    fp = open(fname, "r")
+    read!(fp, data)
+    close(fp)
+end
 
 end # module
